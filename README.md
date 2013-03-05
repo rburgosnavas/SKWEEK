@@ -3,14 +3,14 @@ SKWEEK
 
 =A bytebeat machine in Java=
 
-**WARNING:** This app makes digital audio noise. Keep your volume down when 
-testing. I'm not responsible for blowned eardrums, speakers, headphones, nor for
-making your pets go crazy, or making babies cry.
+**WARNING:** This app makes loud, unpredictable digital audio noises. Keep your 
+volume down when testing. I'm not responsible for blowned eardrums, speakers, 
+headphones, nor for making your pets go crazy, or making babies cry.
 
 ==Usage==
-* Type expression and press play (as of today, one would have to press `stop` to
+* Type expression and press `play` (as of today, one would have to press `stop` 
 before typing another expression)
-* Use the variable `t` at leasst once in your expression
+* Use the variable `t` at least once in your expression
 * Use numbers, even decimals
 * Use these operators: `+ - * / ^ << >> | &`
 * Group expressions with `( )`
