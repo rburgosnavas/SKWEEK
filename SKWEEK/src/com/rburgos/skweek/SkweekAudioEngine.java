@@ -80,7 +80,6 @@ public class SkweekAudioEngine implements Runnable
 			        
 			        if (t > (buffer.length*loop)-t)
 			        {
-			        	System.out.println(t);
 			        	t = 0;
 			        }
 		        }
