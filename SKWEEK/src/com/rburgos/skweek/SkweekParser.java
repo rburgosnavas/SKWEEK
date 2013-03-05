@@ -5,20 +5,12 @@ import java.util.regex.*;
 
 public class SkweekParser
 {
-	private static Stack<String> calculations;
 	private static Stack<String> postfixStack;
 	private static Stack<String> operators;
 	private static final String REGEX = "((t\\b)|(x\\b)|(y\\b)|(z\\b)|(\\d*\\.\\d+)|(\\d+)|([\\+\\-\\*/\\(\\)]|(\\|{1,2})|(\\&{1,2})|(\\<{1,2})|(\\>{1,2})|(\\^{1})))";
 	private static int t, x = 0, y = 0, z = 0;
 
-	public SkweekParser() { }
-	
-	public static String evalToString(String exp)
-	{
-		String[] tokenArray = split(exp);
-		String[] postfixTokenArray = convertToPostfix(tokenArray);
-		return computePostfix(postfixTokenArray);
-	}
+	private SkweekParser() { }
 	
 	public static int evalToInt(String exp, int time, int xval, int yval, int zval)
 	{
@@ -26,13 +18,6 @@ public class SkweekParser
 		x = xval;
 		y = yval;
 		z = zval;
-		String[] tokenArray = split(exp);
-		String[] postfixTokenArray = convertToPostfix(tokenArray);
-		return computePostfixToInt(postfixTokenArray);
-	}
-	
-	public static int evalToInt(String exp)
-	{
 		String[] tokenArray = split(exp);
 		String[] postfixTokenArray = convertToPostfix(tokenArray);
 		return computePostfixToInt(postfixTokenArray);
@@ -148,59 +133,6 @@ public class SkweekParser
 		}
 		
 		return result;
-	}
-	
-	protected static String computePostfix(String[] postfixTokenArray)
-	{
-		calculations = new Stack<>();
-		for (int i = 0; i < postfixTokenArray.length; i++)
-		{
-			switch(postfixTokenArray[i])
-			{
-			case "+":
-				calculations.push(SkweekMath.add(calculations.pop(), calculations.pop()));
-				break;
-			case "-":
-				calculations.push(SkweekMath.sub(calculations.pop(), calculations.pop()));
-				break;
-			case "*":
-				calculations.push(SkweekMath.mul(calculations.pop(), calculations.pop()));
-				break;
-			case "/":
-				calculations.push(SkweekMath.div(calculations.pop(), calculations.pop()));
-				break;
-			case "^":
-				calculations.push(SkweekMath.pow(calculations.pop(), calculations.pop()));
-				break;
-			case "<<":
-				calculations.push(SkweekMath.lshift(calculations.pop(), calculations.pop()));
-				break;
-			case ">>":
-				calculations.push(SkweekMath.rshift(calculations.pop(), calculations.pop()));
-				break;
-			case "|":
-				calculations.push(SkweekMath.or(calculations.pop(), calculations.pop()));
-				break;
-			case "&":
-				calculations.push(SkweekMath.and(calculations.pop(), calculations.pop()));
-				break;
-			case "t":
-				calculations.push(String.valueOf(t));
-				break;
-			case "x":
-				calculations.push(String.valueOf(x));
-				break;
-			case "y":
-				calculations.push(String.valueOf(y));
-				break;
-			case "z":
-				calculations.push(String.valueOf(z));
-				break;
-			default:
-				calculations.push(postfixTokenArray[i]);
-			}
-		}		
-		return calculations.pop();
 	}
 	
 	protected static int computePostfixToInt(String[] postfixTokenArray)
