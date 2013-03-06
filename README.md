@@ -25,7 +25,8 @@ illegal character, incomplete paranthesis, signed variables (starting an
 expression with a negative number (i.e. -4) will not be good). 
 
 ==TODO==
-* Real time typing, evaluating, and processing of expressions
+* Real time typing, evaluating, and processing of expressions - (added, but 
+still in the works)
 * Add export to audio file
 * Save and load expressions
 * Volume control (maybe)
