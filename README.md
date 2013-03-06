@@ -12,7 +12,7 @@ headphones, nor for making your pets go crazy, or making babies cry.
 before typing another expression)
 * Use the variable `t` at least once in your expression
 * Use numbers, even decimals
-* Use these operators: `+ - * / ^ << >> | &`
+* Use these operators: `+ - * / % ^ << >> | &`
 * Group expressions with `( )`
 * Use `x`, `y`, and `z` in your expression and control them in real time with
 their appropriate sliders
