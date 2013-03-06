@@ -70,7 +70,7 @@ public class SkweekAudioEngine implements Runnable
 	        audioformat = new AudioFormat(11025f, 8, 2, false, false);
 	        info = new DataLine.Info(SourceDataLine.class, audioformat);
 	        sourcedataline = (SourceDataLine) AudioSystem.getLine(info);
-	        sourcedataline.open(audioformat, 16000);
+	        sourcedataline.open(audioformat, 1000);
 	        sourcedataline.start();
 	        while (play)
 	        {
