@@ -62,6 +62,7 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		expField = new JTextField(DEFAULT_EXP, 56);
 		expField.setHorizontalAlignment(JTextField.RIGHT);
 		expField.setFont(new Font("Monospaced", Font.PLAIN, 12));
+		expField.addActionListener(this);
 		
 		playBtn = new JButton("play");
 		playBtn.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -71,7 +72,7 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		stopBtn.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		stopBtn.addActionListener(this);
 		
-		loopSlider = new JSlider(1, 500, 100);
+		loopSlider = new JSlider(1, 1000, 100);
 		loopSlider.setForeground(Color.BLACK);
 		loopSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		loopSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "len", TitledBorder.LEFT, TitledBorder.TOP, null, null));
@@ -150,6 +151,20 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		    	exec.execute(thread);
 		    }
 	    }
+    	else if (e.getSource().equals(expField))
+    	{
+			bba.setPlay(false);
+    		if (exp != "" || exp != " " || exp != null)
+		    {
+    			exp = expField.getText();
+		    	bba.setExp(exp);
+		    	bba.setLoop(loopSlider.getValue());
+		    	bba.setPlay(true);
+		    	thread = new Thread(bba);
+		    	playBtn.setEnabled(false);
+		    	exec.execute(thread);
+		    }
+    	}
 	    else
 	    {
 	    	bba.setPlay(false);
