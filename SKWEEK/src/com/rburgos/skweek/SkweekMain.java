@@ -122,7 +122,7 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		legend.setEditable(false);
 		legend.setOpaque(false);
 		legend.setFont(new Font("Monospaced", Font.BOLD, 12));
-		legend.setText("* always use variable t; you can use numbers\n* use x, y, z; use sliders to adjust\n* operators: + - * / ^ | & >> << ( )");
+		legend.setText("* always use variable t; you can use numbers\n* use x, y, z; use sliders to adjust\n* operators: + - * / % ^ | & >> << ( )");
 		
 		mainPanel = new JPanel();
 		mainPanel.setForeground(Color.WHITE);

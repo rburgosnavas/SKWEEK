@@ -25,6 +25,11 @@ public class SkweekMath
 		return String.valueOf((Double.parseDouble(b) / Double.parseDouble(a)));
 	}
 
+	static String mod(String a, String b)
+	{
+		return String.valueOf((Double.parseDouble(b) % Double.parseDouble(a)));
+	}
+
 	static String pow(String a, String b)
 	{
 		return String.valueOf(Math.pow(Double.parseDouble(b), 

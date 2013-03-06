@@ -7,7 +7,9 @@ public class SkweekParser
 {
 	private static Stack<String> postfixStack;
 	private static Stack<String> operators;
-	private static final String REGEX = "((t\\b)|(x\\b)|(y\\b)|(z\\b)|(\\d*\\.\\d+)|(\\d+)|([\\+\\-\\*/\\(\\)]|(\\|{1,2})|(\\&{1,2})|(\\<{1,2})|(\\>{1,2})|(\\^{1})))";
+	private static final String REGEX = "((t\\b)|(x\\b)|(y\\b)|(z\\b)|" + 
+			"(\\d*\\.\\d+)|(\\d+)|([\\+\\-\\*/\\%\\(\\)]|" + 
+			"(\\|{1,2})|(\\&{1,2})|(\\<{1,2})|(\\>{1,2})|(\\^{1})))";
 	private static int t, x = 0, y = 0, z = 0;
 
 	private SkweekParser() { }
@@ -72,7 +74,7 @@ public class SkweekParser
 			else if (tokenArray[i].equals("*") || tokenArray[i].equals("/") || 
 					tokenArray[i].equals("^") || tokenArray[i].equals("<<") ||
 					tokenArray[i].equals(">>") || tokenArray[i].equals("|") ||
-					tokenArray[i].equals("&"))
+					tokenArray[i].equals("&") || tokenArray[i].equals("%"))
 			{
 				if (operators.isEmpty())
 				{
@@ -86,7 +88,8 @@ public class SkweekParser
 							operators.peek().equals("<<") ||
 							operators.peek().equals(">>") ||
 							operators.peek().equals("|") ||
-							operators.peek().equals("&"))
+							operators.peek().equals("&") ||
+							operators.peek().equals("%"))
 					{
 						postfixStack.push(operators.pop());
 						operators.push(tokenArray[i]);
@@ -168,6 +171,9 @@ public class SkweekParser
 				break;
 			case "&":
 				calc.push(SkweekMath.and(calc.pop(), calc.pop()));
+				break;
+			case "%":
+				calc.push(SkweekMath.mod(calc.pop(), calc.pop()));
 				break;
 			case "t":
 				calc.push(String.valueOf(t));
