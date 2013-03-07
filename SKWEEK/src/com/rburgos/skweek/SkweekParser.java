@@ -14,7 +14,8 @@ public class SkweekParser
 
 	private SkweekParser() { }
 	
-	public static int evalToInt(String exp, int time, int xval, int yval, int zval)
+	public static int evalToInt(String exp, int time, int xval, int yval, 
+			int zval)
 	{
 		t = time;
 		x = xval;

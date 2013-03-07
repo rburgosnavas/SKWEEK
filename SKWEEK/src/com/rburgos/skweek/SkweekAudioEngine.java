@@ -76,7 +76,9 @@ public class SkweekAudioEngine implements Runnable
 	        {
 		        for (int i = 0; i < (buffer.length); i++)
 		        {
-			        buffer[i] = (byte) (SkweekParser.evalToInt(exp, t++, x, y, z) / tInc(scale));
+			        buffer[i] = 
+			        		(byte) (SkweekParser.evalToInt(exp, t++, x, y, z) / 
+			        				tInc(scale));
 			        
 			        if (t > (buffer.length*loop)-t)
 			        {
