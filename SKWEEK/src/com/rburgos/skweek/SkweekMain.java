@@ -160,9 +160,7 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		    	bba.setExp(exp);
 		    	bba.setLoop(loopSlider.getValue());
 		    	bba.setPlay(true);
-		    	thread = new Thread(bba);
 		    	playBtn.setEnabled(false);
-		    	exec.execute(thread);
 		    }
     	}
 	    else
