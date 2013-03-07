@@ -24,7 +24,8 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class SkweekMain extends JFrame implements ActionListener, ChangeListener
+public class SkweekMain extends JFrame implements ActionListener, 
+		ChangeListener
 {
 
 	/**
@@ -75,31 +76,36 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		loopSlider = new JSlider(1, 1000, 100);
 		loopSlider.setForeground(Color.BLACK);
 		loopSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		loopSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "len", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		loopSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
+				"len", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		loopSlider.addChangeListener(this);
 		
 		tScaleSlider = new JSlider(1, 20, 1);
 		tScaleSlider.setForeground(Color.BLACK);
 		tScaleSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		tScaleSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "<-...->", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+		tScaleSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
+				"<-...->", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		tScaleSlider.addChangeListener(this);
 		
 		xSlider = new JSlider(1, 20, 1);
 		xSlider.setSnapToTicks(true);
 		xSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		xSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "x", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		xSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
+				"x", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		xSlider.addChangeListener(this);
 		
 		ySlider = new JSlider(1, 20, 1);
 		ySlider.setSnapToTicks(true);
 		ySlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		ySlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "y", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		ySlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
+				"y", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		ySlider.addChangeListener(this);
 		
 		zSlider = new JSlider(1, 20, 1);
 		zSlider.setSnapToTicks(true);
 		zSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		zSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), "z", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		zSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
+				"z", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		zSlider.addChangeListener(this);
 		
 		textPanel = new JPanel();
@@ -122,7 +128,9 @@ public class SkweekMain extends JFrame implements ActionListener, ChangeListener
 		legend.setEditable(false);
 		legend.setOpaque(false);
 		legend.setFont(new Font("Monospaced", Font.BOLD, 12));
-		legend.setText("* always use variable t; you can use numbers\n* use x, y, z; use sliders to adjust\n* operators: + - * / % ^ | & >> << ( )");
+		legend.setText("* always use variable t; you can use numbers\n" + 
+				"* use x, y, z; use sliders to adjust\n" + 
+				"* operators: + - * / % ^ | & >> << ( )");
 		
 		mainPanel = new JPanel();
 		mainPanel.setForeground(Color.WHITE);
