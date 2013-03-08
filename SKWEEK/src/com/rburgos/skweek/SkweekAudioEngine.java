@@ -17,7 +17,7 @@ public class SkweekAudioEngine implements Runnable
 	String exp;
 	int t, x = 1, y = 1, z = 1, scale = 1;
 	int loop;
-    byte[] buffer = new byte[800];
+    byte[] buffer = new byte[8];
     boolean play = false;
 	
 	public void setExp(String exp)
@@ -63,15 +63,18 @@ public class SkweekAudioEngine implements Runnable
 	@Override
 	public void run()
 	{
-		System.out.println(">> thread started");
+		System.out.println("+ thread started");
 		t = 0;
 		try
         {
 	        audioformat = new AudioFormat(11025f, 8, 2, false, false);
 	        info = new DataLine.Info(SourceDataLine.class, audioformat);
 	        sourcedataline = (SourceDataLine) AudioSystem.getLine(info);
-	        sourcedataline.open(audioformat, 1000);
+	        sourcedataline.open(audioformat, sourcedataline.getBufferSize());
 	        sourcedataline.start();
+	        
+	        System.out.println("+ buffer size: " + sourcedataline.getBufferSize());
+	        
 	        while (play)
 	        {
 		        for (int i = 0; i < (buffer.length); i++)
@@ -87,16 +90,19 @@ public class SkweekAudioEngine implements Runnable
 		        }
 		        sourcedataline.write(buffer, 0, buffer.length);
 	        }
-	        System.out.println(">> thread stopped");
+	        
+	        System.out.println("- thread stopped");
         }
         catch (LineUnavailableException e)
         {
 	        e.printStackTrace();
         }
-        sourcedataline.drain();
+        // sourcedataline.drain();
+        sourcedataline.flush();
         sourcedataline.stop();
         sourcedataline.close();
-        System.out.println(">> thread closed");
+        
+        System.out.println("x thread closed\n");
 	}
 
 }

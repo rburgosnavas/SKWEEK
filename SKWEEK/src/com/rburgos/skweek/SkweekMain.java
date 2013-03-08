@@ -43,6 +43,7 @@ public class SkweekMain extends JFrame implements ActionListener,
 	private Executor exec = Executors.newSingleThreadExecutor();
 	static SkweekAudioEngine bba;
 	private JTextPane legend;
+	boolean isPlaying = false;
 	
 	public SkweekMain()
 	{
@@ -157,6 +158,8 @@ public class SkweekMain extends JFrame implements ActionListener,
 		    	thread = new Thread(bba);
 		    	playBtn.setEnabled(false);
 		    	exec.execute(thread);
+		    	isPlaying = true;
+		    	System.out.println("+ id:" + thread.getId());
 		    }
 	    }
     	else if (e.getSource().equals(expField))
@@ -168,12 +171,20 @@ public class SkweekMain extends JFrame implements ActionListener,
 		    	bba.setExp(exp);
 		    	bba.setLoop(loopSlider.getValue());
 		    	bba.setPlay(true);
+		    	if (!isPlaying)
+		    	{
+		    		thread = new Thread(bba);
+			    	exec.execute(thread);
+			    	isPlaying = true;
+			    	System.out.println("+ id:" + thread.getId());
+		    	}
 		    	playBtn.setEnabled(false);
 		    }
     	}
 	    else
 	    {
 	    	bba.setPlay(false);
+	    	isPlaying = false;
 	    	playBtn.setEnabled(true);
 	    }
     }
