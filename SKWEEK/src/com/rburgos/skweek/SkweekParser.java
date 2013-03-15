@@ -5,8 +5,6 @@ import java.util.regex.*;
 
 public class SkweekParser
 {
-	private static Stack<String> postfixStack;
-	private static Stack<String> operators;
 	private static final String REGEX = "((t\\b)|(x\\b)|(y\\b)|(z\\b)|" + 
 			"(\\d*\\.\\d+)|(\\d+)|([\\+\\-\\*/\\%\\(\\)]|" + 
 			"(\\|{1,2})|(\\&{1,2})|(\\<{1,2})|(\\>{1,2})|(\\^{1})))";
@@ -36,108 +34,84 @@ public class SkweekParser
 		{
 		    tokenList.add(matcher.group());
 		}
-
-		String[] tokenArray = new String[tokenList.size()];
 		
-		for (int i = 0; i < tokenList.size(); i++)
-		{
-			tokenArray[i] = tokenList.get(i);
-		}
-		
-		return tokenArray; 
+		return tokenList.toArray(new String[tokenList.size()]);
 	}
 	
 	protected static String[] convertToPostfix(String[] tokenArray)
-	{
-		postfixStack = new Stack<>();
-		operators = new Stack<>();
-		for (int i = 0; i < tokenArray.length; i++)
-		{
-			if (tokenArray[i].equals("+") || tokenArray[i].equals("-"))
-			{
-				if (operators.isEmpty())
-				{
-					operators.push(tokenArray[i]);
-				}
-				else
-				{
-					if (operators.peek().equals("("))
-					{
-						operators.push(tokenArray[i]);
-					}
-					else
-					{
-						postfixStack.push(operators.pop());
-						operators.push(tokenArray[i]);						
-					}
-				}
-			}
-			else if (tokenArray[i].equals("*") || tokenArray[i].equals("/") || 
-					tokenArray[i].equals("^") || tokenArray[i].equals("<<") ||
-					tokenArray[i].equals(">>") || tokenArray[i].equals("|") ||
-					tokenArray[i].equals("&") || tokenArray[i].equals("%"))
-			{
-				if (operators.isEmpty())
-				{
-					operators.push(tokenArray[i]);
-				}
-				else
-				{
-					if (operators.peek().equals("*") || 
-							operators.peek().equals("/") || 
-							operators.peek().equals("^") ||
-							operators.peek().equals("<<") ||
-							operators.peek().equals(">>") ||
-							operators.peek().equals("|") ||
-							operators.peek().equals("&") ||
-							operators.peek().equals("%"))
-					{
-						postfixStack.push(operators.pop());
-						operators.push(tokenArray[i]);
-					}
-					else
-					{
-						operators.push(tokenArray[i]);
-					}
-				}
-			}
-			else if (tokenArray[i].equals("("))
-			{
-				operators.push(tokenArray[i]);
-			}
-			else if (tokenArray[i].equals(")"))
-			{
-				while (!operators.isEmpty())
-				{
-					String rightP = operators.pop();
-					if (!rightP.equals("("))
-					{
-						postfixStack.push(rightP);
-					}
-				}
-			}
-			else
-			{
-				postfixStack.push(tokenArray[i]);
-			}
-			
-		} // end for loop
-		
-		// push remaining elements from operator stack if it's not empty
-		while (!operators.isEmpty()) 
-		{
-			postfixStack.push(operators.pop());	
-		}
-		
-		String[] result = new String[postfixStack.size()];
-		
-		for (int i = 0; i < postfixStack.size(); i++)
-		{
-			result[i] = postfixStack.get(i);
-		}
-		
-		return result;
-	}
+    {
+        Stack<String> postfixStack = new Stack<>();
+        Stack<String> operators = new Stack<>();
+        for (int i = 0; i < tokenArray.length; i++)
+        {
+            if (isLowPrecedence(tokenArray[i]))
+            {
+                if (operators.isEmpty())
+                {
+                    operators.push(tokenArray[i]);
+                }
+                else
+                {
+                    if (isLeftParen(operators.peek()))
+                    {
+                        operators.push(tokenArray[i]);
+                    }
+                    else
+                    {
+                        postfixStack.push(operators.pop());
+                        operators.push(tokenArray[i]);                        
+                    }
+                }
+            }
+            else if (isHighPrecedence(tokenArray[i]))
+            {
+                if (operators.isEmpty())
+                {
+                    operators.push(tokenArray[i]);
+                }
+                else
+                {
+                    if (isHighPrecedence(operators.peek()))
+                    {
+                        postfixStack.push(operators.pop());
+                        operators.push(tokenArray[i]);
+                    }
+                    else
+                    {
+                        operators.push(tokenArray[i]);
+                    }
+                }
+            }
+            else if (isLeftParen(tokenArray[i]))
+            {
+                operators.push(tokenArray[i]);
+            }
+            else if (isRightParen(tokenArray[i]))
+            {
+                while (!operators.isEmpty())
+                {
+                    String rightP = operators.pop();
+                    if (!isLeftParen(rightP))
+                    {
+                        postfixStack.push(rightP);
+                    }
+                }
+            }
+            else
+            {
+                postfixStack.push(tokenArray[i]);
+            }
+            
+        } // end for loop
+        
+        // push remaining elements from operator stack if it's not empty
+        while (!operators.isEmpty()) 
+        {
+            postfixStack.push(operators.pop());    
+        }
+        
+        return postfixStack.toArray(new String[postfixStack.size()]);
+    }
 	
 	protected static int computePostfixToInt(String[] postfixTokenArray)
 	{
@@ -195,4 +169,26 @@ public class SkweekParser
 		Double result = Double.parseDouble(calc.pop());
 		return result.intValue();
 	}
+    
+    private static boolean isLowPrecedence(String op)
+    {
+        return op.equals("+") || op.equals("-");
+    }
+    
+    private static boolean isHighPrecedence(String op)
+    {
+        return op.equals("*") || op.equals("/") || op.equals("^") || 
+            op.equals("<<") || op.equals(">>") || op.equals("|") || 
+            op.equals("&") || op.equals("%");
+    }
+    
+    private static boolean isLeftParen(String op)
+    {
+        return op.equals("(");
+    }
+    
+    private static boolean isRightParen(String op)
+    {
+        return op.equals(")");
+    }
 }
