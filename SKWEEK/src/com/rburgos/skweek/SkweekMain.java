@@ -1,24 +1,13 @@
 package com.rburgos.skweek;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.sound.sampled.LineUnavailableException;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -36,27 +25,24 @@ public class SkweekMain extends JFrame implements ActionListener,
 	private JButton playBtn, stopBtn;
 	private JTextField expField;
 	private JSlider loopSlider, tScaleSlider, xSlider, ySlider, zSlider;
-	static Font mono;
+	private JTextPane legend;
 	private static String exp;
-	private static final String DEFAULT_EXP = "t * (t>>6 | t>>x)";
+	private static final String DEFAULT_EXP = "t * ((t >> 6 | t >> x))";
+	boolean isPlaying = false;
 	static Thread thread;
 	private Executor exec = Executors.newSingleThreadExecutor();
-	static SkweekAudioEngine bba;
-	private JTextPane legend;
-	boolean isPlaying = false;
+	static SkweekAudioEngine audioEngine;
 	
-	public SkweekMain()
+	public SkweekMain() throws LineUnavailableException
 	{
-		setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
 		setAlwaysOnTop(true);
 		setSize(new Dimension(400, 280));
 		setResizable(false);
 		setTitle("SKWEEK");
 		initGUI();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLocationRelativeTo(null);
 		setVisible(true);
-
-		bba = new SkweekAudioEngine();
 	}
 	
 	public void initGUI()
@@ -74,7 +60,7 @@ public class SkweekMain extends JFrame implements ActionListener,
 		stopBtn.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		stopBtn.addActionListener(this);
 		
-		loopSlider = new JSlider(1, 1000, 100);
+		loopSlider = new JSlider(1, 100000, 50000);
 		loopSlider.setForeground(Color.BLACK);
 		loopSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		loopSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
@@ -129,9 +115,11 @@ public class SkweekMain extends JFrame implements ActionListener,
 		legend.setEditable(false);
 		legend.setOpaque(false);
 		legend.setFont(new Font("Monospaced", Font.BOLD, 12));
-		legend.setText("* always use variable t; you can use numbers\n" + 
+		legend.setText(
+				"* always use variable t; you can use numbers\n" + 
 				"* use x, y, z; use sliders to adjust\n" + 
-				"* operators: + - * / % ^ | & >> << ( )");
+				"* operators: + - * / % ^ | & >> << ( )"
+				);
 		
 		mainPanel = new JPanel();
 		mainPanel.setForeground(Color.WHITE);
@@ -151,39 +139,40 @@ public class SkweekMain extends JFrame implements ActionListener,
 	    {
 	    	if (exp != "" || exp != " " || exp != null)
 		    {
-		    	exp = expField.getText();
-		    	bba.setExp(exp);
-		    	bba.setLoop(loopSlider.getValue());
-		    	bba.setPlay(true);
-		    	thread = new Thread(bba);
-		    	playBtn.setEnabled(false);
+	    		exp = expField.getText();
+		    	audioEngine.setExp(exp);
+		    	audioEngine.setLoop(loopSlider.getValue());
+		    	audioEngine.setPlay(true);
+		    	thread = new Thread(audioEngine);
 		    	exec.execute(thread);
+		    	playBtn.setEnabled(false);
 		    	isPlaying = true;
 		    	System.out.println("+ id:" + thread.getId());
 		    }
 	    }
     	else if (e.getSource().equals(expField))
     	{
-			bba.setPlay(false);
     		if (exp != "" || exp != " " || exp != null)
 		    {
-    			exp = expField.getText();
-		    	bba.setExp(exp);
-		    	bba.setLoop(loopSlider.getValue());
-		    	bba.setPlay(true);
 		    	if (!isPlaying)
 		    	{
-		    		thread = new Thread(bba);
+		    		thread = new Thread(audioEngine);
 			    	exec.execute(thread);
-			    	isPlaying = true;
 			    	System.out.println("+ id:" + thread.getId());
 		    	}
+
+    			exp = expField.getText();
+    			audioEngine.setPlay(false);
+		    	audioEngine.setExp(exp);
+		    	audioEngine.setLoop(loopSlider.getValue());
+		    	audioEngine.setPlay(true);
+		    	isPlaying = true;
 		    	playBtn.setEnabled(false);
 		    }
     	}
 	    else
 	    {
-	    	bba.setPlay(false);
+	    	audioEngine.setPlay(false);
 	    	isPlaying = false;
 	    	playBtn.setEnabled(true);
 	    }
@@ -194,31 +183,34 @@ public class SkweekMain extends JFrame implements ActionListener,
     {
 	    if (e.getSource().equals(loopSlider))
 	    {
-	    	bba.setLoop(loopSlider.getValue());
+	    	audioEngine.setLoop(loopSlider.getValue());
 	    }
 	    else if (e.getSource().equals(tScaleSlider))
 	    {
-	    	bba.tScale(tScaleSlider.getValue());
+	    	audioEngine.tScale(tScaleSlider.getValue());
 	    }
 	    else if (e.getSource().equals(xSlider))
 	    {
-	    	bba.setX(xSlider.getValue());
+	    	audioEngine.setX(xSlider.getValue());
 	    }
 	    else if (e.getSource().equals(ySlider))
 	    {
-	    	bba.setY(ySlider.getValue());
+	    	audioEngine.setY(ySlider.getValue());
 	    }
 	    else if (e.getSource().equals(zSlider))
 	    {
-	    	bba.setZ(zSlider.getValue());
+	    	audioEngine.setZ(zSlider.getValue());
 	    }
     }
 	
 	public static void main(String[] args)
 	{
-		try {
+		try 
+		{
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-		} catch (Throwable e) {
+		} 
+		catch (Throwable e) 
+		{
 			e.printStackTrace();
 		}
 		
@@ -227,7 +219,15 @@ public class SkweekMain extends JFrame implements ActionListener,
 			@Override
 			public void run()
 			{
-				new SkweekMain();
+				try
+                {
+	                new SkweekMain();
+	                audioEngine = SkweekAudioEngine.getEngine();
+                }
+                catch (LineUnavailableException e)
+                {
+	                e.printStackTrace();
+                }
 			}
 		});
 	}
