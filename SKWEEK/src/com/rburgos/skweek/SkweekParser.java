@@ -5,10 +5,13 @@ import java.util.regex.*;
 
 public class SkweekParser
 {
-	private static final String REGEX = "((t\\b)|(x\\b)|(y\\b)|(z\\b)|" + 
-			"(\\d*\\.\\d+)|(\\d+)|([\\+\\-\\*/\\%\\(\\)]|" + 
+	private static final String REGEX = 
+			"((t\\b)|(x\\b)|(y\\b)|(z\\b)|" + 
+			"(\\-?\\d*\\.\\d+)|(\\-?\\d+)|" + 
+			"([\\+\\-\\*/\\%\\(\\)]|" + 
 			"(\\|{1,2})|(\\&{1,2})|(\\<{1,2})|(\\>{1,2})|(\\^{1})))";
-	private static int t, x = 0, y = 0, z = 0;
+	
+	private static int t, x, y, z;
 
 	private SkweekParser() { }
 	
@@ -19,12 +22,10 @@ public class SkweekParser
 		x = xval;
 		y = yval;
 		z = zval;
-		String[] tokenArray = split(exp);
-		String[] postfixTokenArray = convertToPostfix(tokenArray);
-		return computePostfixToInt(postfixTokenArray);
+		return calcPostfix(toPostfix(split(exp)));
 	}
 	
-	protected static String[] split(String expression)
+	private static List<String> split(String expression)
 	{
 		Pattern pattern = Pattern.compile(REGEX);
 		Matcher matcher = pattern.matcher(expression);
@@ -35,58 +36,58 @@ public class SkweekParser
 		    tokenList.add(matcher.group());
 		}
 		
-		return tokenList.toArray(new String[tokenList.size()]);
+		return tokenList;
 	}
 	
-	protected static String[] convertToPostfix(String[] tokenArray)
+	private static List<String> toPostfix(List<String> tokenList)
     {
         Stack<String> postfixStack = new Stack<>();
         Stack<String> operators = new Stack<>();
-        for (int i = 0; i < tokenArray.length; i++)
+        for (int i = 0; i < tokenList.size(); i++)
         {
-            if (isLowPrecedence(tokenArray[i]))
+            if (isLowPrecedence(tokenList.get(i)))
             {
                 if (operators.isEmpty())
                 {
-                    operators.push(tokenArray[i]);
+                    operators.push(tokenList.get(i));
                 }
                 else
                 {
                     if (isLeftParen(operators.peek()))
                     {
-                        operators.push(tokenArray[i]);
+                        operators.push(tokenList.get(i));
                     }
                     else
                     {
                         postfixStack.push(operators.pop());
-                        operators.push(tokenArray[i]);                        
+                        operators.push(tokenList.get(i));                        
                     }
                 }
             }
-            else if (isHighPrecedence(tokenArray[i]))
+            else if (isHighPrecedence(tokenList.get(i)))
             {
                 if (operators.isEmpty())
                 {
-                    operators.push(tokenArray[i]);
+                    operators.push(tokenList.get(i));
                 }
                 else
                 {
                     if (isHighPrecedence(operators.peek()))
                     {
                         postfixStack.push(operators.pop());
-                        operators.push(tokenArray[i]);
+                        operators.push(tokenList.get(i));
                     }
                     else
                     {
-                        operators.push(tokenArray[i]);
+                        operators.push(tokenList.get(i));
                     }
                 }
             }
-            else if (isLeftParen(tokenArray[i]))
+            else if (isLeftParen(tokenList.get(i)))
             {
-                operators.push(tokenArray[i]);
+                operators.push(tokenList.get(i));
             }
-            else if (isRightParen(tokenArray[i]))
+            else if (isRightParen(tokenList.get(i)))
             {
                 while (!operators.isEmpty())
                 {
@@ -99,7 +100,7 @@ public class SkweekParser
             }
             else
             {
-                postfixStack.push(tokenArray[i]);
+                postfixStack.push(tokenList.get(i));
             }
             
         } // end for loop
@@ -110,15 +111,15 @@ public class SkweekParser
             postfixStack.push(operators.pop());    
         }
         
-        return postfixStack.toArray(new String[postfixStack.size()]);
+        return postfixStack;
     }
 	
-	protected static int computePostfixToInt(String[] postfixTokenArray)
+	private static int calcPostfix(List<String> postfixList)
 	{
 		Stack<String>calc = new Stack<>();
-		for (int i = 0; i < postfixTokenArray.length; i++)
+		for (int i = 0; i < postfixList.size(); i++)
 		{
-			switch(postfixTokenArray[i])
+			switch(postfixList.get(i))
 			{
 			case "+":
 				calc.push(SkweekMath.add(calc.pop(), calc.pop()));
@@ -163,7 +164,7 @@ public class SkweekParser
 				calc.push(String.valueOf(z));
 				break;
 			default:
-				calc.push(postfixTokenArray[i]);
+				calc.push(postfixList.get(i));
 			}
 		}		
 		Double result = Double.parseDouble(calc.pop());
