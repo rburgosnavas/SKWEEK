@@ -8,8 +8,8 @@ volume down when testing. I'm not responsible for blowned eardrums, speakers,
 headphones, nor for making your pets go crazy, or making babies cry.
 
 ==Usage==
-* Type expression and press `play` (as of today, one would have to press `stop` 
-before typing another expression)
+* Type expression and press `play`; update expression and press `enter` on 
+keyboard to hear changes
 * Use the variable `t` at least once in your expression
 * Use numbers, even decimals
 * Use these operators: `+ - * / % ^ << >> | &`
@@ -21,8 +21,9 @@ their appropriate sliders
 
 This is the first iteration of SKWEEK. It is not perfect in any way and there 
 are many ways that it can improved. It does not check for expressions with 
-illegal character, incomplete paranthesis, signed variables (starting an 
-expression with a negative number (i.e. -4) will not be good). 
+illegal character, incomplete paranthesis.
+
+There is buggy support for negative numbers. 
 
 ==TODO==
 * Real time typing, evaluating, and processing of expressions - (added, but 
