@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SKWEEK:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts</output-path>
+    <root id="archive" name="SKWEEK.jar">
+      <element id="module-output" name="SKWEEK" />
+    </root>
+  </artifact>
+</component>
