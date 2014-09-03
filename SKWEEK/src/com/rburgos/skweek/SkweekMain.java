@@ -19,10 +19,11 @@ public class SkweekMain extends JFrame implements ActionListener,
     private JPanel mainPanel, textPanel, controlPanel, buttonPanel;
     private JButton playBtn, stopBtn;
     private JTextField expField;
-    private JSlider tScaleSlider, xSlider, ySlider, zSlider;
+    private JSlider tweakSlider, xSlider, ySlider, zSlider;
     private JTextPane legend;
     private static String exp;
-    private static final String DEFAULT_EXP = "((t * 0.5) * (t * 1.5) & ((t * x)) * (t * y)) & (t) | (t ^ 0.5)";
+    private static final String DEFAULT_EXP =
+		    "((t * 0.5) * (t * 1.5) & ((t * x)) * (t * y)) & (t) | (t ^ 0.5)";
     boolean isPlaying = false;
     static Thread thread;
     private Executor exec = Executors.newSingleThreadExecutor();
@@ -40,7 +41,8 @@ public class SkweekMain extends JFrame implements ActionListener,
     }
 
     public void initGUI() {
-        expField = new JTextField(DEFAULT_EXP, 56);
+        expField = new JTextField(DEFAULT_EXP);
+	    expField.setPreferredSize(new Dimension(390, 40));
         expField.setHorizontalAlignment(JTextField.RIGHT);
         expField.setFont(new Font("Monospaced", Font.PLAIN, 12));
         expField.addActionListener(this);
@@ -53,12 +55,12 @@ public class SkweekMain extends JFrame implements ActionListener,
         stopBtn.setFont(new Font("Monospaced", Font.PLAIN, 12));
         stopBtn.addActionListener(this);
 
-        tScaleSlider = new JSlider(1, 20, 1);
-        tScaleSlider.setForeground(Color.BLACK);
-        tScaleSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        tScaleSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0),
-                "<>", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-        tScaleSlider.addChangeListener(this);
+        tweakSlider = new JSlider(1, 20, 1);
+        tweakSlider.setForeground(Color.BLACK);
+        tweakSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        tweakSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0),
+		        "<>", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+        tweakSlider.addChangeListener(this);
 
         xSlider = new JSlider(1, 20, 1);
         xSlider.setSnapToTicks(true);
@@ -86,7 +88,7 @@ public class SkweekMain extends JFrame implements ActionListener,
 
         controlPanel = new JPanel();
         controlPanel.setLayout(new GridLayout(0, 1, 0, 0));
-        controlPanel.add(tScaleSlider);
+        controlPanel.add(tweakSlider);
         controlPanel.add(xSlider);
         controlPanel.add(ySlider);
         controlPanel.add(zSlider);
@@ -121,7 +123,7 @@ public class SkweekMain extends JFrame implements ActionListener,
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(playBtn)) {
-            if (exp != "" || exp != " " || exp != null) {
+            if (!"".equals(exp) || !" ".equals(exp) || exp != null) {
                 exp = expField.getText();
                 audioEngine.setExp(exp);
                 audioEngine.setPlay(true);
@@ -129,14 +131,12 @@ public class SkweekMain extends JFrame implements ActionListener,
                 exec.execute(thread);
                 playBtn.setEnabled(false);
                 isPlaying = true;
-                System.out.println("+ id:" + thread.getId());
             }
         } else if (e.getSource().equals(expField)) {
-            if (exp != "" || exp != " " || exp != null) {
+            if (!"".equals(exp) || !" ".equals(exp) || (exp != null)) {
                 if (!isPlaying) {
                     thread = new Thread(audioEngine);
                     exec.execute(thread);
-                    System.out.println("+ id:" + thread.getId());
                 }
 
                 exp = expField.getText();
@@ -155,8 +155,8 @@ public class SkweekMain extends JFrame implements ActionListener,
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (e.getSource().equals(tScaleSlider)) {
-            audioEngine.tScale(tScaleSlider.getValue());
+        if (e.getSource().equals(tweakSlider)) {
+            audioEngine.setTweakAmount(tweakSlider.getValue());
         } else if (e.getSource().equals(xSlider)) {
             audioEngine.setX(xSlider.getValue());
         } else if (e.getSource().equals(ySlider)) {
@@ -168,7 +168,7 @@ public class SkweekMain extends JFrame implements ActionListener,
 
     public static void main(String[] args) {
         try {
-            UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.motif.MotifLookAndFeel");
         } catch (Throwable e) {
             e.printStackTrace();
         }

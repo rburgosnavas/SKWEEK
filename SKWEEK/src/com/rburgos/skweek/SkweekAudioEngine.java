@@ -7,13 +7,13 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 
 public class SkweekAudioEngine implements Runnable {
-
+	private static int CAP = 65535;
     private static SkweekAudioEngine audioEngine;
     private AudioFormat audioFormat;
     private DataLine.Info info;
     private SourceDataLine dataLine;
     private String exp;
-    private int t, x = 1, y = 1, z = 1, scale = 1;
+    private int t, x = 1, y = 1, z = 1, tweakAmount = 1;
     private byte[] buffer;
     private boolean play = false;
 
@@ -57,19 +57,15 @@ public class SkweekAudioEngine implements Runnable {
 
     private void write() {
         while (play) {
-            for (int i = 0; i < (buffer.length); i++) {
-                t++;
+            for (int i = 0; i < buffer.length; i++) {
+	            t = (t > CAP) ? 0 : (t + 1);
                 SkweekParser.setT(t);
                 SkweekParser.setX(x);
                 SkweekParser.setY(y);
                 SkweekParser.setZ(z);
                 double e = SkweekParser.eval(exp);
-                byte res = (byte) (e / tInc(scale));
+                byte res = (byte) (e / tweak(tweakAmount));
                 buffer[i] = res;
-
-                if (t > 65535) {
-                    t = 0;
-                }
             }
 
             dataLine.write(buffer, 0, buffer.length);
@@ -96,12 +92,12 @@ public class SkweekAudioEngine implements Runnable {
         this.z = z;
     }
 
-    public void tScale(int scale) {
-        this.scale = scale;
+    public void setTweakAmount(int tweakAmount) {
+        this.tweakAmount = tweakAmount;
     }
 
-    public int tInc(int scale) {
-        return scale > 0 ? scale : this.scale;
+    public int tweak(int amount) {
+        return amount > 0 ? amount : this.tweakAmount;
     }
 
 }
