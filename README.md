@@ -7,6 +7,9 @@ SKWEEK
 volume down when testing. I'm not responsible for blowned eardrums, speakers, 
 headphones, nor for making your pets go crazy or babies cry.
 
+==To run==
+To run, your clone the project and build, or grab the JAR from https://github.com/rburgosnavas/SKWEEK/tree/master/out/artifacts
+
 ==Usage==
 * Type expression and press `play`; update expression and press `enter` on 
 keyboard to hear changes
