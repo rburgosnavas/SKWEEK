@@ -14,17 +14,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class SkweekMain extends JFrame implements ActionListener, 
-		ChangeListener
-{
+		ChangeListener {
 
-	/**
-	 * 
-	 */
-    private static final long serialVersionUID = 1891895482395555691L;
+	private static final long serialVersionUID = 1891895482395555691L;
 	private JPanel mainPanel, textPanel, controlPanel, buttonPanel;
 	private JButton playBtn, stopBtn;
 	private JTextField expField;
-	private JSlider loopSlider, tScaleSlider, xSlider, ySlider, zSlider;
+	private JSlider tScaleSlider, xSlider, ySlider, zSlider;
 	private JTextPane legend;
 	private static String exp;
 	private static final String DEFAULT_EXP = "t * ((t >> 6 | t >> x))";
@@ -33,20 +29,18 @@ public class SkweekMain extends JFrame implements ActionListener,
 	private Executor exec = Executors.newSingleThreadExecutor();
 	static SkweekAudioEngine audioEngine;
 	
-	public SkweekMain() throws LineUnavailableException
-	{
+	public SkweekMain() throws LineUnavailableException {
 		setAlwaysOnTop(true);
 		setSize(new Dimension(400, 280));
 		setResizable(false);
-		setTitle("SKWEEK");
+		setTitle("skweek");
 		initGUI();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setVisible(true);
 	}
 	
-	public void initGUI()
-	{
+	public void initGUI() {
 		expField = new JTextField(DEFAULT_EXP, 56);
 		expField.setHorizontalAlignment(JTextField.RIGHT);
 		expField.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -60,18 +54,11 @@ public class SkweekMain extends JFrame implements ActionListener,
 		stopBtn.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		stopBtn.addActionListener(this);
 		
-		loopSlider = new JSlider(1, 100000, 50000);
-		loopSlider.setForeground(Color.BLACK);
-		loopSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
-		loopSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
-				"len", TitledBorder.LEFT, TitledBorder.TOP, null, null));
-		loopSlider.addChangeListener(this);
-		
 		tScaleSlider = new JSlider(1, 20, 1);
 		tScaleSlider.setForeground(Color.BLACK);
 		tScaleSlider.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		tScaleSlider.setBorder(new TitledBorder(new EmptyBorder(0, 0, 0, 0), 
-				"<-...->", TitledBorder.LEFT, TitledBorder.TOP, null, null));
+				"<>", TitledBorder.LEFT, TitledBorder.TOP, null, null));
 		tScaleSlider.addChangeListener(this);
 		
 		xSlider = new JSlider(1, 20, 1);
@@ -100,7 +87,6 @@ public class SkweekMain extends JFrame implements ActionListener,
 		
 		controlPanel = new JPanel();
 		controlPanel.setLayout(new GridLayout(0, 1, 0, 0));
-		controlPanel.add(loopSlider);
 		controlPanel.add(tScaleSlider);
 		controlPanel.add(xSlider);
 		controlPanel.add(ySlider);
@@ -117,7 +103,8 @@ public class SkweekMain extends JFrame implements ActionListener,
 		legend.setFont(new Font("Monospaced", Font.BOLD, 12));
 		legend.setText(
 				"* always use variable t; you can use numbers\n" + 
-				"* use x, y, z; use sliders to adjust\n" + 
+				"* use x, y, z in expression; use sliders to adjust\n" +
+                "* use <> for additional mangling\n" +
 				"* operators: + - * / % ^ | & >> << ( )"
 				);
 		
@@ -133,15 +120,11 @@ public class SkweekMain extends JFrame implements ActionListener,
 	}
 
 	@Override
-    public void actionPerformed(ActionEvent e)
-    {
-    	if (e.getSource().equals(playBtn))
-	    {
-	    	if (exp != "" || exp != " " || exp != null)
-		    {
+    public void actionPerformed(ActionEvent e) {
+    	if (e.getSource().equals(playBtn)) {
+	    	if (exp != "" || exp != " " || exp != null) {
 	    		exp = expField.getText();
 		    	audioEngine.setExp(exp);
-		    	audioEngine.setLoop(loopSlider.getValue());
 		    	audioEngine.setPlay(true);
 		    	thread = new Thread(audioEngine);
 		    	exec.execute(thread);
@@ -150,12 +133,9 @@ public class SkweekMain extends JFrame implements ActionListener,
 		    	System.out.println("+ id:" + thread.getId());
 		    }
 	    }
-    	else if (e.getSource().equals(expField))
-    	{
-    		if (exp != "" || exp != " " || exp != null)
-		    {
-		    	if (!isPlaying)
-		    	{
+    	else if (e.getSource().equals(expField)) {
+    		if (exp != "" || exp != " " || exp != null) {
+		    	if (!isPlaying) {
 		    		thread = new Thread(audioEngine);
 			    	exec.execute(thread);
 			    	System.out.println("+ id:" + thread.getId());
@@ -164,14 +144,12 @@ public class SkweekMain extends JFrame implements ActionListener,
     			exp = expField.getText();
     			audioEngine.setPlay(false);
 		    	audioEngine.setExp(exp);
-		    	audioEngine.setLoop(loopSlider.getValue());
 		    	audioEngine.setPlay(true);
 		    	isPlaying = true;
 		    	playBtn.setEnabled(false);
 		    }
     	}
-	    else
-	    {
+	    else {
 	    	audioEngine.setPlay(false);
 	    	isPlaying = false;
 	    	playBtn.setEnabled(true);
@@ -179,53 +157,35 @@ public class SkweekMain extends JFrame implements ActionListener,
     }
 
 	@Override
-    public void stateChanged(ChangeEvent e)
-    {
-	    if (e.getSource().equals(loopSlider))
-	    {
-	    	audioEngine.setLoop(loopSlider.getValue());
-	    }
-	    else if (e.getSource().equals(tScaleSlider))
-	    {
+    public void stateChanged(ChangeEvent e) {
+	    if (e.getSource().equals(tScaleSlider)) {
 	    	audioEngine.tScale(tScaleSlider.getValue());
 	    }
-	    else if (e.getSource().equals(xSlider))
-	    {
+	    else if (e.getSource().equals(xSlider)) {
 	    	audioEngine.setX(xSlider.getValue());
 	    }
-	    else if (e.getSource().equals(ySlider))
-	    {
+	    else if (e.getSource().equals(ySlider)) {
 	    	audioEngine.setY(ySlider.getValue());
 	    }
-	    else if (e.getSource().equals(zSlider))
-	    {
+	    else if (e.getSource().equals(zSlider)) {
 	    	audioEngine.setZ(zSlider.getValue());
 	    }
     }
 	
-	public static void main(String[] args)
-	{
-		try 
-		{
+	public static void main(String[] args) {
+		try {
 			UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
-		} 
-		catch (Throwable e) 
-		{
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		
-		SwingUtilities.invokeLater(new Runnable()
-		{
+		SwingUtilities.invokeLater(new Runnable() {
 			@Override
-			public void run()
-			{
-				try
-                {
+			public void run() {
+				try {
 	                new SkweekMain();
 	                audioEngine = SkweekAudioEngine.getEngine();
-                }
-                catch (LineUnavailableException e)
-                {
+                } catch (LineUnavailableException e) {
 	                e.printStackTrace();
                 }
 			}
