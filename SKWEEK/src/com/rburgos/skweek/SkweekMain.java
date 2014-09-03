@@ -1,17 +1,16 @@
 package com.rburgos.skweek;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class SkweekMain extends JFrame implements ActionListener,
         ChangeListener {
@@ -23,7 +22,7 @@ public class SkweekMain extends JFrame implements ActionListener,
     private JSlider tScaleSlider, xSlider, ySlider, zSlider;
     private JTextPane legend;
     private static String exp;
-    private static final String DEFAULT_EXP = "t * ((t >> 6 | t >> x))";
+    private static final String DEFAULT_EXP = "((t * 0.5) * (t * 1.5) & ((t * x)) * (t * y)) & (t) | (t ^ 0.5)";
     boolean isPlaying = false;
     static Thread thread;
     private Executor exec = Executors.newSingleThreadExecutor();
